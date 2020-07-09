@@ -34,8 +34,8 @@ public class Application {
 		
 		DataSource source = new DataSource("Ecartico", Type.NT, Utils.ECARTICO, null);
 		Model model = source.getRDFModel();
-		split(model, properties);
-		
+		//split(model, properties);
+		checkProperties(model);
 	}
 
 	public static void split(Model model, List<Property> properties) {
@@ -52,5 +52,15 @@ public class Application {
 				sourceModelHandler.dump(String.format("src/main/resources/local-databases/Ecartico-%s-%d", type, i));
 			}
 		}
+	}
+	
+	public static void checkProperties(Model model) {
+		RDFModelHandler handler = new RDFModelHandler(model);
+		Map<Property, List<Statement>> propertyMap = handler.mapStatementsToProperties();
+		propertyMap.forEach((k,v) -> {
+			if(v.size() > 10) { 
+				System.out.println(k + ", " + v.size());
+			}
+		});
 	}
 }
