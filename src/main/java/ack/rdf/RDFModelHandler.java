@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -64,6 +68,22 @@ public class RDFModelHandler {
 			extracted.add(it.next());
 		}
 		return extracted;
+	}
+	
+	public List<String> getPropertiesOfDomain(String domainClass) {
+		String query = "SELECT DISTINCT ?pred WHERE {?a a <" + domainClass + ">. ?a ?pred ?b}";
+	    QueryExecution qexec = QueryExecutionFactory.create(query, model);
+	    ResultSet results = qexec.execSelect();
+	    List<String> answer = new ArrayList<String>();
+	    while(results.hasNext()){
+	    	QuerySolution t = results.nextSolution();
+	    	RDFNode x  = t.get("pred");
+	    	String s = x.toString();
+	    	
+	    	answer.add(s.substring(7));
+	    }
+	    qexec.close();
+		return answer;
 	}
 
 	public void dump(String fileName) {

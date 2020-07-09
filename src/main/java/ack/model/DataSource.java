@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class DataSource {
 	
-	public static enum Type {
+	public static enum ConnectionType {
 		TURTLE, NT, TDB2;
 	}
 
@@ -33,12 +33,12 @@ public class DataSource {
 	private Dataset dataset;
 	private Model model;
 	private final String name;
-	private final Type type;
+	private final ConnectionType type;
 	private final String location;
 	private final List<PreparedQuery> queries = new ArrayList<>();
 	
 	public DataSource(@JsonProperty(value = "name", required = true) String name, 
-			@JsonProperty(value = "type", required = true) Type type, 
+			@JsonProperty(value = "type", required = true) ConnectionType type, 
 			@JsonProperty(value = "location", required = true) String location,
 			@JsonProperty(value = "query-file", required = true) String queryFileName) {
 		this.name = name;
@@ -49,10 +49,10 @@ public class DataSource {
 	}
 	
 	private void setup() {
-		if(type == Type.TDB2) {
+		if(type == ConnectionType.TDB2) {
 			LOGGER.info(String.format("TDB2 connection to %s", this.location));
 			this.dataset = TDB2Factory.connectDataset(location);
-		} else if(type == Type.TURTLE || type == Type.NT) {
+		} else if(type == ConnectionType.TURTLE || type == ConnectionType.NT) {
 			this.model = ModelFactory.createDefaultModel();
 			this.model.read(location);
 			LOGGER.log(Level.INFO, String.format("model reading for type %s from %s", this.type, this.location));
@@ -65,7 +65,7 @@ public class DataSource {
 		return name;
 	}
 
-	public Type getType() {
+	public ConnectionType getType() {
 		return type;
 	}
 	

@@ -13,10 +13,10 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 
+import ack.model.SourceTemplate;
+
 
 public class PropertyDistributor {
-
-	public static enum Type{COMPLETE, PARTIAL_RANDOM, PARTIAL_ORDERED};
 	
 	private final List<Property> properties = new ArrayList<>();
 	private final Map<Resource, List<Statement>> resourceMap;
@@ -28,17 +28,19 @@ public class PropertyDistributor {
 		this.resourceMap = resourceMap;
 	}
 
-	public Model createSource(Type type, int n) {
+	public Model createSource(SourceTemplate template) {
 		model = ModelFactory.createDefaultModel();
-		switch (type) {
+		switch (template.getType()) {
 		case COMPLETE:
-			createCompleteSourceForProperties(n);
+			createCompleteSourceForProperties(template.getMinNumberOfProperties());
 			break;
 		case PARTIAL_RANDOM:
-			createPartialSourceForProperties(n, false);
+			createPartialSourceForProperties(template.getMinNumberOfProperties(), 
+					template.getMaxNumberOfProperties(), false);
 			break;
 		case PARTIAL_ORDERED:
-			createPartialSourceForProperties(n, true);
+			createPartialSourceForProperties(template.getMinNumberOfProperties(), 
+					template.getMaxNumberOfProperties(), true);
 			break;
 		}
 		return model;
@@ -65,12 +67,12 @@ public class PropertyDistributor {
 	 * @param n max number of capabilities
 	 * @param isOrdered is the order of capabilities fixed
 	 */
-	private void createPartialSourceForProperties(int n, boolean isOrdered){
-		List<Property> selectedProperties = getPartOfProperties(n);
+	private void createPartialSourceForProperties(int min, int max, boolean isOrdered){
+		List<Property> selectedProperties = getPartOfProperties(max);
 		Collections.shuffle(selectedProperties);
 		Random rnd = ThreadLocalRandom.current();
 		for(List<Statement> statements : resourceMap.values()) {
-			int x = 1 + rnd.nextInt(n);
+			int x = min + rnd.nextInt(max-min);
 			addStatements(statements, selectedProperties.subList(0, x));
 			if(!isOrdered) {
 				Collections.shuffle(selectedProperties);

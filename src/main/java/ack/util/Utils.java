@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 public class Utils {
 
-	public static final String ECARTICO = "src/main/resources/local-databases/ecartico.nt";
+	public static final String ECARTICO = "src/main/resources/local-databases/ecartico-fixed.ttl";
 	
 	private Utils() {};
 
