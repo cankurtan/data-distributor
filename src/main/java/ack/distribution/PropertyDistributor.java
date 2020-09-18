@@ -19,16 +19,17 @@ import ack.model.SourceTemplate;
 public class PropertyDistributor {
 	
 	private final List<Property> properties = new ArrayList<>();
-	private final Map<Resource, List<Statement>> resourceMap;
+	private Map<Resource, List<Statement>> resourceMap;
 	private Model model;
 
-	public PropertyDistributor(List<Property> properties, 
-			Map<Resource, List<Statement>> resourceMap) {
+	public PropertyDistributor(List<Property> properties) {
 		this.properties.addAll(properties);
-		this.resourceMap = resourceMap;
+		Collections.shuffle(properties);
 	}
 
-	public Model createSource(SourceTemplate template) {
+	public Model createSource(SourceTemplate template, 
+			Map<Resource, List<Statement>> resourceMap) {
+		this.resourceMap = resourceMap;
 		model = ModelFactory.createDefaultModel();
 		switch (template.getType()) {
 		case COMPLETE:

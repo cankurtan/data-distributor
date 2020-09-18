@@ -19,7 +19,7 @@ public class ResourceDistributor {
 	public Map<Resource, List<Statement>> createRandomly(double chance) {
 		Map<Resource, List<Statement>> selected = new HashMap<>();
 		for(Entry<Resource, List<Statement>> entry : resourceMap.entrySet()){
-			if(Math.random() < chance) {
+			if(Math.random() <= chance) {
 				selected.put(entry.getKey(), entry.getValue());
 			}
 		}

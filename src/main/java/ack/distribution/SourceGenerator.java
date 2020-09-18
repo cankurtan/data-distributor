@@ -48,11 +48,9 @@ public class SourceGenerator {
 	public void splitForSelectedProperties(SourceTemplate[] templates, List<Property> properties) {
 		RDFModelHandler handler = new RDFModelHandler(model);
 		Map<Resource, List<Statement>> resourceMap = handler.mapStatementsToSubjects();
-		ResourceDistributor ed = new ResourceDistributor(resourceMap);
+		PropertyDistributor pd = new PropertyDistributor(properties);
 		for (int i = 0; i < templates.length; i++) {
-			Map<Resource, List<Statement>> selected = ed.createRandomly(0.3*(i+1));
-			PropertyDistributor pd = new PropertyDistributor(properties, selected);
-			Model sourceModel = pd.createSource(templates[i]);
+			Model sourceModel = pd.createSource(templates[i], resourceMap);
 			RDFModelHandler sourceModelHandler = new RDFModelHandler(sourceModel);
 			sourceModelHandler.dump(String.format("src/main/resources/local-databases/Ecartico-%d", i));
 		}
